@@ -6,6 +6,7 @@
   "cases": [
     {"name": "xyml", "text": "<|XYML|invoke name=\"get_weather\"><|XYML|parameter name=\"city\"><![CDATA[Paris]]></|XYML|parameter></|XYML|invoke>", "calls": [{"name": "get_weather", "arguments": {"city": "Paris"}}]},
     {"name": "qnml", "text": "<|QNML|invoke name='get_weather'><|QNML|parameter name='city'>Tokyo</|QNML|parameter></|QNML|invoke>", "calls": [{"name": "get_weather", "arguments": {"city": "Tokyo"}}]},
+    {"name": "zero-width-markup", "text": "<|\u200bXYML|inv\u200coke name=\"get_\u200dweather\"\ufeff><|XYML|parameter name=\"city\">Paris</|XYML|parameter></|XYML|invoke>", "calls": [{"name": "get_weather", "arguments": {"city": "Paris"}}]},
     {"name": "markup-key-values", "text": "<|XYML|invoke name=\"get_weather\">city=Paris\nunits=metric</|XYML|invoke>", "calls": [{"name": "get_weather", "arguments": {"city": "Paris", "units": "metric"}}]},
     {"name": "loose-cdata", "text": "XYML name=\"get_weather\" parameter=\"city\" <![CDATA[Paris]]>", "calls": [{"name": "get_weather", "arguments": {"city": "Paris"}}]},
     {"name": "nested-function-input", "text": "{\"function\":{\"name\":\"get_weather\",\"input\":{\"city\":\"Paris\"}}}", "calls": [{"name": "get_weather", "arguments": {"city": "Paris"}}]},

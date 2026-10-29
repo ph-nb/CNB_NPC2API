@@ -651,6 +651,8 @@ pub fn parse(source: &str, tools: &[Tool], protocol: &str, strip_think: bool) ->
         source.to_owned()
     };
     let normalized = text
+        .replace(['\u{200b}', '\u{200c}', '\u{200d}', '\u{feff}'], "")
+        .replace(['\u{3000}', '\u{00a0}'], " ")
         .replace(['＜', '﹤'], "<")
         .replace(['＞', '﹥'], ">")
         .replace(['／', '∕', '⁄'], "/")

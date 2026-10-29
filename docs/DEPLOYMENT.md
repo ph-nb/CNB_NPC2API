@@ -55,7 +55,7 @@ cargo build --locked --release --target x86_64-unknown-linux-musl
 docker build -f Dockerfile.musl -t cnb-forge:musl .
 ```
 
-在 Debian/Ubuntu 构建该目标通常需要安装 `musl-tools`。scratch 镜像没有 shell；需要通过宿主机 HTTP 请求检查健康状态，不能依赖容器内 `curl`。两个镜像均可使用 `python tests/docker_smoke.py IMAGE` 运行无真实上游的冒烟测试。
+在 Debian/Ubuntu 构建该目标通常需要安装 `musl-tools`。scratch 镜像没有 shell；需要通过宿主机 HTTP 请求检查健康状态，不能依赖容器内 `curl`。两个镜像均可使用 `python tests/docker_smoke.py IMAGE` 运行无真实上游的冒烟测试，该测试需要 Docker 的 `host-gateway` 功能。
 
 ## 网络与维护
 

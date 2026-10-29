@@ -44,6 +44,8 @@ python tests/parser_reference.py
 
 如果同级目录已有检出，先确认它没有需要保留的改动再切换提交。`python tests/parser_reference.py --generate` 会改写生成语料；更新语料后应运行 Rust 测试，并审查差异。当前语料只覆盖选定示例，不构成所有解析行为逐项等价的证明。
 
+开发时如已安装 `cargo-watch`，可使用 `cargo watch -x 'run -- --config config.example.yaml'` 在源码变化后重新编译并重启程序。该命令会中断已有连接，不能代替服务的配置热重载。
+
 ## 真实上游测试
 
 以下操作会访问第三方服务，可能产生请求费用或受配额限制。仅在本机提供凭据，不要将凭据传给 CI 或提交到仓库。
@@ -59,6 +61,6 @@ python tests/live_upstreams.py --provider openai --model MODEL_NAME --key-prompt
 
 ## CI
 
-`.github/workflows/ci.yml` 在 push、pull request 和手动触发时运行。Windows 和 Ubuntu 原生 runner 分别执行格式、Clippy、Rust 测试、官方 SDK 模拟测试、CLI 重载测试和 ToolForge 语料对照；Ubuntu 还构建标准 Docker 镜像和 musl scratch 镜像，检查两者非 root 启动、健康和鉴权。CI 固定 ToolForge 参考提交和 GitHub Actions 的完整提交哈希，不配置真实上游凭据，也不发布镜像。CI 结果仅证明所执行场景，不能替代真实外部上游和生产负载测试。
+`.github/workflows/ci.yml` 在 push、pull request 和手动触发时运行。Windows 和 Ubuntu 原生 runner 分别执行格式、Clippy、Rust 测试、官方 SDK 模拟测试、CLI 重载测试和 ToolForge 语料对照；Ubuntu 还构建标准 Docker 镜像和 musl scratch 镜像，检查两者非 root 启动、健康、鉴权及模拟聊天。容器测试使用 Docker 的 `host-gateway` 功能连接宿主机上的临时模拟上游。CI 固定 ToolForge 参考提交和 GitHub Actions 的完整提交哈希，不配置真实上游凭据，也不发布镜像。CI 结果仅证明所执行场景，不能替代真实外部上游和生产负载测试。
 
 历史验证记录及尚未验证的部分见 [测试记录](../TEST_REPORT.md)。

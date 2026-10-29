@@ -40,6 +40,22 @@ struct Mock {
     release_stream: Notify,
 }
 
+fn consume_failure(counter: &AtomicUsize) -> bool {
+    let mut remaining = counter.load(Ordering::SeqCst);
+    while remaining > 0 {
+        match counter.compare_exchange_weak(
+            remaining,
+            remaining - 1,
+            Ordering::SeqCst,
+            Ordering::SeqCst,
+        ) {
+            Ok(_) => return true,
+            Err(actual) => remaining = actual,
+        }
+    }
+    false
+}
+
 async fn homepage(State(mock): State<Arc<Mock>>, headers: HeaderMap) -> Response {
     if mock.slow_home.load(Ordering::SeqCst) {
         mock.fetch_started.notify_one();
@@ -174,11 +190,7 @@ async fn fake(mock: Arc<Mock>, headers: HeaderMap, body: Value, kind: &str) -> R
         {
             return (StatusCode::UNAUTHORIZED, "not logged in").into_response();
         }
-        if mock
-            .csrf_failures
-            .fetch_update(Ordering::SeqCst, Ordering::SeqCst, |n| n.checked_sub(1))
-            .is_ok()
-        {
+        if consume_failure(&mock.csrf_failures) {
             return (StatusCode::UNAUTHORIZED, "csrf rejected").into_response();
         }
         if body.to_string().contains("TEST_NOT_LOGIN") {
@@ -221,12 +233,7 @@ async fn fake(mock: Arc<Mock>, headers: HeaderMap, body: Value, kind: &str) -> R
     } else {
         "get_weather"
     };
-    let text = if prompt
-        && mock
-            .malformed
-            .fetch_update(Ordering::SeqCst, Ordering::SeqCst, |n| n.checked_sub(1))
-            .is_ok()
-    {
+    let text = if prompt && consume_failure(&mock.malformed) {
         "<|XYML|tool_calls>".into()
     } else if prompt {
         fc::render(tool_name, &json!({"city":"Tokyo"}), "XYML")

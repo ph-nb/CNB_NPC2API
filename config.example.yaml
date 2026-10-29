@@ -1,0 +1,38 @@
+server:
+  host: "127.0.0.1"
+  port: 8080
+  timeout_seconds: 180
+
+client_authentication:
+  enabled: true
+  allowed_keys:
+    - "${CNB_FORGE_API_KEY}"
+
+upstreams:
+  - name: cnb
+    type: cnb
+    base_url: "https://cnb.cool"
+    session_cookie: "${CNB_SESSION_COOKIE}"
+    models: ["deepseek-v4-flash", "deepseek-v4-pro"]
+    native_fc: false
+    is_default: true
+    pool_min: 2
+    pool_max: 8
+    ttl_minutes: 30
+
+routing:
+  aliases: {}
+
+features:
+  fc_mode: auto
+  enable_streaming: true
+  enable_fc_error_retry: true
+  fc_error_retry_max: 2
+  strip_think_tags: true
+  inject_protocol: XYML
+  convert_developer_to_system: true
+  key_passthrough: false
+  model_passthrough: false
+  enable_cli_profiles: true
+  obfuscate_tool_names: false
+  enable_metrics: true

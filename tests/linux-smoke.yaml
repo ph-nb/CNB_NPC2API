@@ -1,0 +1,11 @@
+server:
+  host: 127.0.0.1
+  port: 18080
+client_authentication:
+  enabled: false
+upstreams:
+  - name: mock
+    type: openai_compat
+    base_url: http://127.0.0.1:9/v1
+    models: [test-model]
+    native_fc: true

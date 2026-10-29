@@ -1,0 +1,9 @@
+/target/
+/config.yaml
+/config.*.yaml
+!/config.example.yaml
+/.env
+/.env.*
+!/.env.example
+*.log
+__pycache__/

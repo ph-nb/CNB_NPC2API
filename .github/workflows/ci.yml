@@ -1,0 +1,98 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  rust-and-sdk:
+    name: Rust and SDK (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    defaults:
+      run:
+        working-directory: cnb-forge
+    env:
+      CNB_FORGE_BINARY: ${{ github.workspace }}/cnb-forge/target/debug/cnb-forge${{ matrix.os == 'windows-latest' && '.exe' || '' }}
+    steps:
+      - name: Check out gateway
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          path: cnb-forge
+          persist-credentials: false
+      - name: Check out parser reference
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          repository: YuJunZhiXue/toolforge
+          ref: 8d5b3b06b7a82628cc5d916f72f0a81af33581f1
+          path: toolforge
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.13'
+      - name: Update Rust
+        run: rustup update stable --no-self-update
+      - name: Select Rust
+        run: rustup default stable
+      - name: Install Rust components
+        run: rustup component add rustfmt clippy
+      - name: Check formatting
+        run: cargo fmt --all -- --check
+      - name: Run Clippy
+        run: cargo clippy --locked --all-targets -- -D warnings
+      - name: Run Rust tests
+        run: cargo test --locked
+      - name: Build gateway for integration tests
+        run: cargo build --locked
+      - name: Install SDK dependencies
+        run: python -m pip install -r tests/sdk-requirements.txt
+      - name: Compare ToolForge parser
+        run: python tests/parser_reference.py
+      - name: Test client SDKs
+        run: python tests/sdk_smoke.py
+      - name: Test SDK live request shapes against mock
+        run: python tests/sdk_smoke.py --mock-live-inputs
+      - name: Test CLI reload
+        run: python tests/cli_reload_smoke.py
+      - name: Test simulated OpenAI upstream
+        run: python tests/live_upstreams.py --provider openai --model mock --mock --vision --native-tools
+      - name: Test simulated Anthropic upstream
+        run: python tests/live_upstreams.py --provider anthropic --model mock --mock --vision --native-tools
+      - name: Test simulated Gemini upstream
+        run: python tests/live_upstreams.py --provider gemini --model mock --mock --vision --native-tools
+
+  docker:
+    name: Docker images (Ubuntu)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out gateway
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.13'
+      - name: Install musl toolchain
+        run: |
+          rustup update stable --no-self-update
+          rustup default stable
+          rustup target add x86_64-unknown-linux-musl
+          sudo apt-get update
+          sudo apt-get install -y musl-tools
+      - name: Build standard image
+        run: docker build --tag cnb-forge:ci .
+      - name: Build musl image
+        run: |
+          cargo build --locked --release --target x86_64-unknown-linux-musl
+          docker build --file Dockerfile.musl --tag cnb-forge:musl-ci .
+      - name: Smoke test both images
+        run: python tests/docker_smoke.py cnb-forge:ci cnb-forge:musl-ci

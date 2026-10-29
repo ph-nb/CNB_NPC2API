@@ -1,0 +1,1208 @@
+[
+  {
+    "name": "generated-000",
+    "text": "<|XYML|invoke name=\"get_weather\"><|XYML|parameter name=\"city\">Paris</|XYML|parameter></|XYML|invoke>",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Paris"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-001",
+    "text": "before <|XYML|tool_calls><|XYML|invoke name=\"get_weather\"><|XYML|parameter name=\"city\">Paris</|XYML|parameter></|XYML|invoke></|XYML|tool_calls> after",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Paris"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-002",
+    "text": "<|XYML|invoke name=\"get_weather\"><|XYML|parameter name=\"city\">Tokyo</|XYML|parameter></|XYML|invoke>",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Tokyo"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-003",
+    "text": "before <|XYML|tool_calls><|XYML|invoke name=\"get_weather\"><|XYML|parameter name=\"city\">Tokyo</|XYML|parameter></|XYML|invoke></|XYML|tool_calls> after",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Tokyo"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-004",
+    "text": "<|XYML|invoke name=\"get_weather\"><|XYML|parameter name=\"city\">New York</|XYML|parameter></|XYML|invoke>",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "New York"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-005",
+    "text": "before <|XYML|tool_calls><|XYML|invoke name=\"get_weather\"><|XYML|parameter name=\"city\">New York</|XYML|parameter></|XYML|invoke></|XYML|tool_calls> after",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "New York"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-006",
+    "text": "<|XYML|invoke name=\"get_weather\"><|XYML|parameter name=\"city\"><![CDATA[Paris]]></|XYML|parameter></|XYML|invoke>",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Paris"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-007",
+    "text": "before <|XYML|tool_calls><|XYML|invoke name=\"get_weather\"><|XYML|parameter name=\"city\"><![CDATA[Paris]]></|XYML|parameter></|XYML|invoke></|XYML|tool_calls> after",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Paris"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-008",
+    "text": "<|XYML|invoke name=\"get_weather\"><|XYML|parameter name=\"city\"><![CDATA[Tokyo]]></|XYML|parameter></|XYML|invoke>",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Tokyo"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-009",
+    "text": "before <|XYML|tool_calls><|XYML|invoke name=\"get_weather\"><|XYML|parameter name=\"city\"><![CDATA[Tokyo]]></|XYML|parameter></|XYML|invoke></|XYML|tool_calls> after",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Tokyo"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-010",
+    "text": "<|XYML|invoke name=\"get_weather\"><|XYML|parameter name=\"city\"><![CDATA[New York]]></|XYML|parameter></|XYML|invoke>",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "New York"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-011",
+    "text": "before <|XYML|tool_calls><|XYML|invoke name=\"get_weather\"><|XYML|parameter name=\"city\"><![CDATA[New York]]></|XYML|parameter></|XYML|invoke></|XYML|tool_calls> after",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "New York"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-012",
+    "text": "<|XYML|invoke name='get_weather'><|XYML|parameter name='city'>Paris</|XYML|parameter></|XYML|invoke>",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Paris"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-013",
+    "text": "before <|XYML|tool_calls><|XYML|invoke name='get_weather'><|XYML|parameter name='city'>Paris</|XYML|parameter></|XYML|invoke></|XYML|tool_calls> after",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Paris"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-014",
+    "text": "<|XYML|invoke name='get_weather'><|XYML|parameter name='city'>Tokyo</|XYML|parameter></|XYML|invoke>",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Tokyo"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-015",
+    "text": "before <|XYML|tool_calls><|XYML|invoke name='get_weather'><|XYML|parameter name='city'>Tokyo</|XYML|parameter></|XYML|invoke></|XYML|tool_calls> after",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Tokyo"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-016",
+    "text": "<|XYML|invoke name='get_weather'><|XYML|parameter name='city'>New York</|XYML|parameter></|XYML|invoke>",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "New York"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-017",
+    "text": "before <|XYML|tool_calls><|XYML|invoke name='get_weather'><|XYML|parameter name='city'>New York</|XYML|parameter></|XYML|invoke></|XYML|tool_calls> after",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "New York"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-018",
+    "text": "<|XYML|invoke name='get_weather'><|XYML|parameter name='city'><![CDATA[Paris]]></|XYML|parameter></|XYML|invoke>",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Paris"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-019",
+    "text": "before <|XYML|tool_calls><|XYML|invoke name='get_weather'><|XYML|parameter name='city'><![CDATA[Paris]]></|XYML|parameter></|XYML|invoke></|XYML|tool_calls> after",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Paris"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-020",
+    "text": "<|XYML|invoke name='get_weather'><|XYML|parameter name='city'><![CDATA[Tokyo]]></|XYML|parameter></|XYML|invoke>",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Tokyo"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-021",
+    "text": "before <|XYML|tool_calls><|XYML|invoke name='get_weather'><|XYML|parameter name='city'><![CDATA[Tokyo]]></|XYML|parameter></|XYML|invoke></|XYML|tool_calls> after",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Tokyo"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-022",
+    "text": "<|XYML|invoke name='get_weather'><|XYML|parameter name='city'><![CDATA[New York]]></|XYML|parameter></|XYML|invoke>",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "New York"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-023",
+    "text": "before <|XYML|tool_calls><|XYML|invoke name='get_weather'><|XYML|parameter name='city'><![CDATA[New York]]></|XYML|parameter></|XYML|invoke></|XYML|tool_calls> after",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "New York"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-024",
+    "text": "<|XYML|invoke name=get_weather><|XYML|parameter name=city>Paris</|XYML|parameter></|XYML|invoke>",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Paris"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-025",
+    "text": "before <|XYML|tool_calls><|XYML|invoke name=get_weather><|XYML|parameter name=city>Paris</|XYML|parameter></|XYML|invoke></|XYML|tool_calls> after",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Paris"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-026",
+    "text": "<|XYML|invoke name=get_weather><|XYML|parameter name=city>Tokyo</|XYML|parameter></|XYML|invoke>",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Tokyo"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-027",
+    "text": "before <|XYML|tool_calls><|XYML|invoke name=get_weather><|XYML|parameter name=city>Tokyo</|XYML|parameter></|XYML|invoke></|XYML|tool_calls> after",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Tokyo"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-028",
+    "text": "<|XYML|invoke name=get_weather><|XYML|parameter name=city><![CDATA[Paris]]></|XYML|parameter></|XYML|invoke>",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Paris"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-029",
+    "text": "before <|XYML|tool_calls><|XYML|invoke name=get_weather><|XYML|parameter name=city><![CDATA[Paris]]></|XYML|parameter></|XYML|invoke></|XYML|tool_calls> after",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Paris"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-030",
+    "text": "<|XYML|invoke name=get_weather><|XYML|parameter name=city><![CDATA[Tokyo]]></|XYML|parameter></|XYML|invoke>",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Tokyo"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-031",
+    "text": "before <|XYML|tool_calls><|XYML|invoke name=get_weather><|XYML|parameter name=city><![CDATA[Tokyo]]></|XYML|parameter></|XYML|invoke></|XYML|tool_calls> after",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Tokyo"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-032",
+    "text": "<|QNML|invoke name=\"get_weather\"><|QNML|parameter name=\"city\">Paris</|QNML|parameter></|QNML|invoke>",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Paris"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-033",
+    "text": "before <|QNML|tool_calls><|QNML|invoke name=\"get_weather\"><|QNML|parameter name=\"city\">Paris</|QNML|parameter></|QNML|invoke></|QNML|tool_calls> after",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Paris"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-034",
+    "text": "<|QNML|invoke name=\"get_weather\"><|QNML|parameter name=\"city\">Tokyo</|QNML|parameter></|QNML|invoke>",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Tokyo"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-035",
+    "text": "before <|QNML|tool_calls><|QNML|invoke name=\"get_weather\"><|QNML|parameter name=\"city\">Tokyo</|QNML|parameter></|QNML|invoke></|QNML|tool_calls> after",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Tokyo"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-036",
+    "text": "<|QNML|invoke name=\"get_weather\"><|QNML|parameter name=\"city\">New York</|QNML|parameter></|QNML|invoke>",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "New York"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-037",
+    "text": "before <|QNML|tool_calls><|QNML|invoke name=\"get_weather\"><|QNML|parameter name=\"city\">New York</|QNML|parameter></|QNML|invoke></|QNML|tool_calls> after",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "New York"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-038",
+    "text": "<|QNML|invoke name=\"get_weather\"><|QNML|parameter name=\"city\"><![CDATA[Paris]]></|QNML|parameter></|QNML|invoke>",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Paris"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-039",
+    "text": "before <|QNML|tool_calls><|QNML|invoke name=\"get_weather\"><|QNML|parameter name=\"city\"><![CDATA[Paris]]></|QNML|parameter></|QNML|invoke></|QNML|tool_calls> after",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Paris"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-040",
+    "text": "<|QNML|invoke name=\"get_weather\"><|QNML|parameter name=\"city\"><![CDATA[Tokyo]]></|QNML|parameter></|QNML|invoke>",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Tokyo"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-041",
+    "text": "before <|QNML|tool_calls><|QNML|invoke name=\"get_weather\"><|QNML|parameter name=\"city\"><![CDATA[Tokyo]]></|QNML|parameter></|QNML|invoke></|QNML|tool_calls> after",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Tokyo"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-042",
+    "text": "<|QNML|invoke name=\"get_weather\"><|QNML|parameter name=\"city\"><![CDATA[New York]]></|QNML|parameter></|QNML|invoke>",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "New York"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-043",
+    "text": "before <|QNML|tool_calls><|QNML|invoke name=\"get_weather\"><|QNML|parameter name=\"city\"><![CDATA[New York]]></|QNML|parameter></|QNML|invoke></|QNML|tool_calls> after",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "New York"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-044",
+    "text": "<|QNML|invoke name='get_weather'><|QNML|parameter name='city'>Paris</|QNML|parameter></|QNML|invoke>",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Paris"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-045",
+    "text": "before <|QNML|tool_calls><|QNML|invoke name='get_weather'><|QNML|parameter name='city'>Paris</|QNML|parameter></|QNML|invoke></|QNML|tool_calls> after",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Paris"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-046",
+    "text": "<|QNML|invoke name='get_weather'><|QNML|parameter name='city'>Tokyo</|QNML|parameter></|QNML|invoke>",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Tokyo"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-047",
+    "text": "before <|QNML|tool_calls><|QNML|invoke name='get_weather'><|QNML|parameter name='city'>Tokyo</|QNML|parameter></|QNML|invoke></|QNML|tool_calls> after",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Tokyo"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-048",
+    "text": "<|QNML|invoke name='get_weather'><|QNML|parameter name='city'>New York</|QNML|parameter></|QNML|invoke>",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "New York"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-049",
+    "text": "before <|QNML|tool_calls><|QNML|invoke name='get_weather'><|QNML|parameter name='city'>New York</|QNML|parameter></|QNML|invoke></|QNML|tool_calls> after",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "New York"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-050",
+    "text": "<|QNML|invoke name='get_weather'><|QNML|parameter name='city'><![CDATA[Paris]]></|QNML|parameter></|QNML|invoke>",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Paris"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-051",
+    "text": "before <|QNML|tool_calls><|QNML|invoke name='get_weather'><|QNML|parameter name='city'><![CDATA[Paris]]></|QNML|parameter></|QNML|invoke></|QNML|tool_calls> after",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Paris"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-052",
+    "text": "<|QNML|invoke name='get_weather'><|QNML|parameter name='city'><![CDATA[Tokyo]]></|QNML|parameter></|QNML|invoke>",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Tokyo"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-053",
+    "text": "before <|QNML|tool_calls><|QNML|invoke name='get_weather'><|QNML|parameter name='city'><![CDATA[Tokyo]]></|QNML|parameter></|QNML|invoke></|QNML|tool_calls> after",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Tokyo"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-054",
+    "text": "<|QNML|invoke name='get_weather'><|QNML|parameter name='city'><![CDATA[New York]]></|QNML|parameter></|QNML|invoke>",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "New York"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-055",
+    "text": "before <|QNML|tool_calls><|QNML|invoke name='get_weather'><|QNML|parameter name='city'><![CDATA[New York]]></|QNML|parameter></|QNML|invoke></|QNML|tool_calls> after",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "New York"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-056",
+    "text": "<|QNML|invoke name=get_weather><|QNML|parameter name=city>Paris</|QNML|parameter></|QNML|invoke>",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Paris"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-057",
+    "text": "before <|QNML|tool_calls><|QNML|invoke name=get_weather><|QNML|parameter name=city>Paris</|QNML|parameter></|QNML|invoke></|QNML|tool_calls> after",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Paris"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-058",
+    "text": "<|QNML|invoke name=get_weather><|QNML|parameter name=city>Tokyo</|QNML|parameter></|QNML|invoke>",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Tokyo"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-059",
+    "text": "before <|QNML|tool_calls><|QNML|invoke name=get_weather><|QNML|parameter name=city>Tokyo</|QNML|parameter></|QNML|invoke></|QNML|tool_calls> after",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Tokyo"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-060",
+    "text": "<|QNML|invoke name=get_weather><|QNML|parameter name=city><![CDATA[Paris]]></|QNML|parameter></|QNML|invoke>",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Paris"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-061",
+    "text": "before <|QNML|tool_calls><|QNML|invoke name=get_weather><|QNML|parameter name=city><![CDATA[Paris]]></|QNML|parameter></|QNML|invoke></|QNML|tool_calls> after",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Paris"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-062",
+    "text": "<|QNML|invoke name=get_weather><|QNML|parameter name=city><![CDATA[Tokyo]]></|QNML|parameter></|QNML|invoke>",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Tokyo"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-063",
+    "text": "before <|QNML|tool_calls><|QNML|invoke name=get_weather><|QNML|parameter name=city><![CDATA[Tokyo]]></|QNML|parameter></|QNML|invoke></|QNML|tool_calls> after",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Tokyo"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-064",
+    "text": "XYML name=\"get_weather\" parameter=\"city\" <![CDATA[Paris]]>",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Paris"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-065",
+    "text": "<|XYML|invoke name=\"get_weather\">city=Paris\nunits=metric</|XYML|invoke>",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Paris",
+          "units": "metric"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-066",
+    "text": "XYML name=\"get_weather\" parameter=\"city\" <![CDATA[Tokyo]]>",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Tokyo"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-067",
+    "text": "<|XYML|invoke name=\"get_weather\">city=Tokyo\nunits=metric</|XYML|invoke>",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Tokyo",
+          "units": "metric"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-068",
+    "text": "XYML name=\"get_weather\" parameter=\"city\" <![CDATA[New York]]>",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "New York"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-069",
+    "text": "<|XYML|invoke name=\"get_weather\">city=New York\nunits=metric</|XYML|invoke>",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "New York",
+          "units": "metric"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-070",
+    "text": "QNML name=\"get_weather\" parameter=\"city\" <![CDATA[Paris]]>",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Paris"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-071",
+    "text": "<|QNML|invoke name=\"get_weather\">city=Paris\nunits=metric</|QNML|invoke>",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Paris",
+          "units": "metric"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-072",
+    "text": "QNML name=\"get_weather\" parameter=\"city\" <![CDATA[Tokyo]]>",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Tokyo"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-073",
+    "text": "<|QNML|invoke name=\"get_weather\">city=Tokyo\nunits=metric</|QNML|invoke>",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Tokyo",
+          "units": "metric"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-074",
+    "text": "QNML name=\"get_weather\" parameter=\"city\" <![CDATA[New York]]>",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "New York"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-075",
+    "text": "<|QNML|invoke name=\"get_weather\">city=New York\nunits=metric</|QNML|invoke>",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "New York",
+          "units": "metric"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-076",
+    "text": "{\"name\": \"get_weather\", \"arguments\": {\"city\": \"Paris\"}}",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Paris"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-077",
+    "text": "{\"name\": \"get_weather\", \"arguments\": {\"city\": \"Tokyo\"}}",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Tokyo"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-078",
+    "text": "{\"tool\": \"get_weather\", \"arguments\": {\"city\": \"Paris\"}}",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Paris"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-079",
+    "text": "{\"tool\": \"get_weather\", \"arguments\": {\"city\": \"Tokyo\"}}",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Tokyo"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-080",
+    "text": "{\"tool_name\": \"get_weather\", \"arguments\": {\"city\": \"Paris\"}}",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Paris"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-081",
+    "text": "{\"tool_name\": \"get_weather\", \"arguments\": {\"city\": \"Tokyo\"}}",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Tokyo"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-082",
+    "text": "{\"function_name\": \"get_weather\", \"arguments\": {\"city\": \"Paris\"}}",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Paris"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-083",
+    "text": "{\"function_name\": \"get_weather\", \"arguments\": {\"city\": \"Tokyo\"}}",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Tokyo"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-084",
+    "text": "```json\n{\"name\": \"get_weather\", \"arguments\": {\"city\": \"Paris\"}}\n```",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Paris"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-085",
+    "text": "```json\n{\"name\": \"get_weather\", \"arguments\": {\"city\": \"Tokyo\"}}\n```",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Tokyo"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-086",
+    "text": "```json\n{\"tool\": \"get_weather\", \"arguments\": {\"city\": \"Paris\"}}\n```",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Paris"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-087",
+    "text": "```json\n{\"tool\": \"get_weather\", \"arguments\": {\"city\": \"Tokyo\"}}\n```",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Tokyo"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-088",
+    "text": "```json\n{\"tool_name\": \"get_weather\", \"arguments\": {\"city\": \"Paris\"}}\n```",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Paris"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-089",
+    "text": "```json\n{\"tool_name\": \"get_weather\", \"arguments\": {\"city\": \"Tokyo\"}}\n```",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Tokyo"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-090",
+    "text": "```json\n{\"function_name\": \"get_weather\", \"arguments\": {\"city\": \"Paris\"}}\n```",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Paris"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-091",
+    "text": "```json\n{\"function_name\": \"get_weather\", \"arguments\": {\"city\": \"Tokyo\"}}\n```",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Tokyo"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-092",
+    "text": "before {\"name\": \"get_weather\", \"arguments\": {\"city\": \"Paris\"}} after",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Paris"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-093",
+    "text": "before {\"name\": \"get_weather\", \"arguments\": {\"city\": \"Tokyo\"}} after",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Tokyo"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-094",
+    "text": "before {\"tool\": \"get_weather\", \"arguments\": {\"city\": \"Paris\"}} after",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Paris"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-095",
+    "text": "before {\"tool\": \"get_weather\", \"arguments\": {\"city\": \"Tokyo\"}} after",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Tokyo"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-096",
+    "text": "before {\"tool_name\": \"get_weather\", \"arguments\": {\"city\": \"Paris\"}} after",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Paris"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-097",
+    "text": "before {\"tool_name\": \"get_weather\", \"arguments\": {\"city\": \"Tokyo\"}} after",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Tokyo"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-098",
+    "text": "before {\"function_name\": \"get_weather\", \"arguments\": {\"city\": \"Paris\"}} after",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Paris"
+        }
+      }
+    ]
+  },
+  {
+    "name": "generated-099",
+    "text": "before {\"function_name\": \"get_weather\", \"arguments\": {\"city\": \"Tokyo\"}} after",
+    "calls": [
+      {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Tokyo"
+        }
+      }
+    ]
+  }
+]

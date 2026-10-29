@@ -1,0 +1,25 @@
+{
+  "tools": [
+    {"type": "function", "function": {"name": "get_weather", "parameters": {"type": "object", "properties": {"city": {"type": "string"}, "units": {"type": "string"}, "tags": {"type": "array", "items": {"type": "object"}}}, "required": ["city"]}}},
+    {"type": "function", "function": {"name": "Read", "parameters": {"type": "object", "properties": {"file_path": {"type": "string"}}, "required": ["file_path"]}}}
+  ],
+  "cases": [
+    {"name": "xyml", "text": "<|XYML|invoke name=\"get_weather\"><|XYML|parameter name=\"city\"><![CDATA[Paris]]></|XYML|parameter></|XYML|invoke>", "calls": [{"name": "get_weather", "arguments": {"city": "Paris"}}]},
+    {"name": "qnml", "text": "<|QNML|invoke name='get_weather'><|QNML|parameter name='city'>Tokyo</|QNML|parameter></|QNML|invoke>", "calls": [{"name": "get_weather", "arguments": {"city": "Tokyo"}}]},
+    {"name": "markup-key-values", "text": "<|XYML|invoke name=\"get_weather\">city=Paris\nunits=metric</|XYML|invoke>", "calls": [{"name": "get_weather", "arguments": {"city": "Paris", "units": "metric"}}]},
+    {"name": "loose-cdata", "text": "XYML name=\"get_weather\" parameter=\"city\" <![CDATA[Paris]]>", "calls": [{"name": "get_weather", "arguments": {"city": "Paris"}}]},
+    {"name": "nested-function-input", "text": "{\"function\":{\"name\":\"get_weather\",\"input\":{\"city\":\"Paris\"}}}", "calls": [{"name": "get_weather", "arguments": {"city": "Paris"}}]},
+    {"name": "malformed-name-equals", "text": "{\"name=\"get_weather\",\"arguments\":{\"city\":\"Paris\"}}", "calls": [{"name": "get_weather", "arguments": {"city": "Paris"}}]},
+    {"name": "equals-instead-of-colon", "text": "{\"name\"=\"get_weather\",\"arguments\"={\"city\":\"Paris\"}}", "calls": [{"name": "get_weather", "arguments": {"city": "Paris"}}]},
+    {"name": "unclosed-json-envelope", "text": "{\"name\":\"get_weather\",\"arguments\":{\"city\":\"Paris\"}", "calls": [{"name": "get_weather", "arguments": {"city": "Paris"}}]},
+    {"name": "key-value-arguments", "text": "{\"name\":\"get_weather\",\"arguments\":\"city=Paris\\nunits=metric\"}", "calls": [{"name": "get_weather", "arguments": {"city": "Paris", "units": "metric"}}]},
+    {"name": "text-tool-input", "text": "tool: get_weather\ntool_input: city=Paris", "calls": [{"name": "get_weather", "arguments": {"city": "Paris"}}]},
+    {"name": "xml-parameters", "text": "<tool_use name=\"get_weather\"><city>Paris</city></tool_use>", "calls": [{"name": "get_weather", "arguments": {"city": "Paris"}}]},
+    {"name": "array-schema-coercion", "text": "{\"name\":\"get_weather\",\"arguments\":{\"city\":\"Paris\",\"tags\":\"{\\\"kind\\\":\\\"rail\\\"}\"}}", "calls": [{"name": "get_weather", "arguments": {"city": "Paris", "tags": [{"kind": "rail"}]}}]},
+    {"name": "tool-alias", "text": "<|XYML|invoke name=\"fs_open_file\"><|XYML|parameter name=\"path\">src/main.rs</|XYML|parameter></|XYML|invoke>", "calls": [{"name": "Read", "arguments": {"file_path": "src/main.rs"}}]},
+    {"name": "polluted-path", "text": "{\"name\":\"Read\",\"arguments\":{\"file_path\":\"<tool_calls>\"}}", "calls": []},
+    {"name": "missing-required", "text": "{\"name\":\"get_weather\",\"arguments\":{\"units\":\"metric\"}}", "calls": []},
+    {"name": "unknown-tool", "text": "{\"name\":\"other\",\"arguments\":{\"city\":\"Paris\"}}", "calls": []},
+    {"name": "deduplicate", "text": "[{\"name\":\"get_weather\",\"arguments\":{\"city\":\"Paris\"}},{\"name\":\"get_weather\",\"arguments\":{\"city\":\"Paris\"}}]", "calls": [{"name": "get_weather", "arguments": {"city": "Paris"}}]}
+  ]
+}

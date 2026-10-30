@@ -309,7 +309,7 @@ server:
   host: "127.0.0.1"
   port: 9000
 client_authentication:
-  allowed_keys: ["${CNB_FORGE_TEST_UNSET_1284:-test:key}"]
+  allowed_keys: ["${CNB_NPC2API_TEST_UNSET_1284:-test:key}"]
 upstreams:
   - name: example
     type: openai_compat

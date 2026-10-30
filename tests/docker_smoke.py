@@ -61,7 +61,7 @@ def check_image(image):
     user = docker("image", "inspect", "--format", "{{.Config.User}}", image)
     if user in ("", "root", "0", "0:0"):
         raise RuntimeError(f"{image} does not configure a non-root user")
-    name = "cnb-forge-smoke-" + uuid.uuid4().hex[:12]
+    name = "cnb-npc2api-smoke-" + uuid.uuid4().hex[:12]
     port = unused_port()
     base = f"http://127.0.0.1:{port}"
     mock = ThreadingHTTPServer(("0.0.0.0", 0), MockUpstream)
@@ -72,7 +72,7 @@ def check_image(image):
             "client_authentication": {"enabled": True, "allowed_keys": ["docker-test-key"]},
             "upstreams": [{"name": "mock", "type": "openai_compat", "base_url": f"http://host.docker.internal:{mock.server_port}/v1", "models": ["test-model"]}],
         }
-        with tempfile.TemporaryDirectory(prefix="cnb-forge-docker-") as directory:
+        with tempfile.TemporaryDirectory(prefix="cnb-npc2api-docker-") as directory:
             path = Path(directory) / "config.yaml"
             path.write_text(json.dumps(config), encoding="utf-8")
             path.chmod(0o644)

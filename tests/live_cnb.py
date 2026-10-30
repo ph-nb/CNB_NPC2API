@@ -27,16 +27,16 @@ def main():
     parser.add_argument("--state", action="store_true", help="also test Responses conversation and tool-result history")
     parser.add_argument("--state-only", action="store_true", help="test only Responses conversation and tool-result history")
     args = parser.parse_args()
-    executable = "cnb-forge.exe" if os.name == "nt" else "cnb-forge"
+    executable = "cnb-npc2api.exe" if os.name == "nt" else "cnb-npc2api"
     release_binary = Path("target/release") / executable
     default_binary = str(release_binary if release_binary.is_file() else Path("target/debug") / executable)
-    binary = Path(os.environ.get("CNB_FORGE_BINARY", default_binary)).resolve()
+    binary = Path(os.environ.get("CNB_NPC2API_BINARY") or os.environ.get("CNB_FORGE_BINARY") or default_binary).resolve()
     if not binary.is_file():
         raise FileNotFoundError(binary)
     port = unused_port()
     base = f"http://127.0.0.1:{port}"
     key = secrets.token_urlsafe(32)
-    with tempfile.TemporaryDirectory(prefix="cnb-forge-live-") as tmp:
+    with tempfile.TemporaryDirectory(prefix="cnb-npc2api-live-") as tmp:
         config = Path(tmp) / "config.yaml"
         config.write_text(
             f"server:\n  host: 127.0.0.1\n  port: {port}\n"
@@ -48,7 +48,7 @@ def main():
         env = os.environ.copy()
         if args.session_prompt:
             env["CNB_SESSION_COOKIE"] = getpass.getpass("CNB Cookie: ")
-        env["RUST_LOG"] = "cnb_forge=warn"
+        env["RUST_LOG"] = "cnb_npc2api=warn"
         process = subprocess.Popen([str(binary), "--config", str(config)], stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, env=env,
                                    creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
         try:

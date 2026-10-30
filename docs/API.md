@@ -18,11 +18,11 @@
 
 OpenAI SDK 的 base URL 可设置为 `http://127.0.0.1:8080/v1`；Anthropic SDK 使用 `http://127.0.0.1:8080`；Gemini SDK 使用同一服务根地址及 `v1beta` API 版本。SDK 示例和自动化验证见 [开发与测试](DEVELOPMENT.md)。
 
-例如在 POSIX shell 中，设置 `CNB_FORGE_API_KEY` 后：
+例如在 POSIX shell 中，设置 `CNB_NPC2API_API_KEY` 后：
 
 ```sh
 curl --fail-with-body http://127.0.0.1:8080/v1/chat/completions \
-  -H "Authorization: Bearer $CNB_FORGE_API_KEY" \
+  -H "Authorization: Bearer $CNB_NPC2API_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{"model":"deepseek-v4-flash","messages":[{"role":"user","content":"你好"}]}'
 ```

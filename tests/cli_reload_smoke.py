@@ -18,12 +18,15 @@ def unused_port():
 
 
 def main():
-    name = "cnb-forge.exe" if os.name == "nt" else "cnb-forge"
-    binary = Path(os.environ.get("CNB_FORGE_BINARY", str(Path("target/release") / name))).resolve()
+    name = "cnb-npc2api.exe" if os.name == "nt" else "cnb-npc2api"
+    binary = Path(os.environ.get("CNB_NPC2API_BINARY") or os.environ.get("CNB_FORGE_BINARY") or str(Path("target/release") / name)).resolve()
+    label, separator, version = subprocess.check_output([str(binary), "--version"], text=True).strip().partition(" ")
+    if label != "CNB_NPC2API" or not separator or not version:
+        raise RuntimeError("gateway returned an invalid version")
     port = unused_port()
     base = f"http://127.0.0.1:{port}"
     config = {"server": {"host": "127.0.0.1", "port": 19000}, "client_authentication": {"enabled": True, "allowed_keys": ["old-test-key"]}, "upstreams": [{"name": "mock", "type": "openai_compat", "base_url": "http://127.0.0.1:9/v1", "models": ["old-model"], "native_fc": True}]}
-    with tempfile.TemporaryDirectory(prefix="cnb-forge-reload-") as directory:
+    with tempfile.TemporaryDirectory(prefix="cnb-npc2api-reload-") as directory:
         path = Path(directory) / "config.yaml"
         path.write_text(json.dumps(config), encoding="utf-8")
         process = subprocess.Popen([str(binary), "--config", str(path), "--host", "127.0.0.1", "--port", str(port), "--reload"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
@@ -48,6 +51,9 @@ def main():
                 raise RuntimeError("gateway reload did not reach the expected state")
 
             wait_for(lambda: models("old-test-key")[0] == 200)
+            with urllib.request.urlopen(base + "/healthz", timeout=1) as response:
+                if json.load(response).get("version") != version:
+                    raise RuntimeError("health and CLI versions differ")
             pid = process.pid
             config["client_authentication"]["allowed_keys"] = ["new-test-key"]
             config["upstreams"][0]["models"] = ["new-model"]
@@ -60,7 +66,7 @@ def main():
             path.write_text("server: [", encoding="utf-8")
             time.sleep(1.5)
             assert models("new-test-key")[0] == 200 and process.poll() is None
-            print("CLI reload: changed key and model applied; invalid config retained previous state")
+            print("CLI version and health agree; changed key and model applied; invalid config retained previous state")
         finally:
             process.terminate()
             try:

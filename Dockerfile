@@ -7,8 +7,8 @@ RUN cargo build --locked --release
 FROM debian:trixie-slim
 RUN useradd --system --uid 10001 --create-home app
 WORKDIR /app
-COPY --from=build /src/target/release/cnb-forge /usr/local/bin/cnb-forge
+COPY --from=build /src/target/release/cnb-npc2api /usr/local/bin/cnb-npc2api
 COPY config.example.yaml ./config.example.yaml
 USER app
 EXPOSE 8080
-ENTRYPOINT ["cnb-forge", "--host", "0.0.0.0"]
+ENTRYPOINT ["cnb-npc2api", "--host", "0.0.0.0"]

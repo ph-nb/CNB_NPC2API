@@ -31,6 +31,8 @@ use tower::ServiceExt;
 #[derive(Default)]
 struct Mock {
     calls: Mutex<Vec<(String, HeaderMap, Value)>>,
+    csrf_key: String,
+    csrf_token: String,
     csrf_failures: AtomicUsize,
     malformed: AtomicUsize,
     slow_home: AtomicBool,
@@ -72,9 +74,9 @@ async fn homepage(State(mock): State<Arc<Mock>>, headers: HeaderMap) -> Response
     (
         [(
             header::SET_COOKIE,
-            "csrfkey=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa; Path=/; HttpOnly",
+            format!("csrfkey={}; Path=/; HttpOnly", mock.csrf_key),
         )],
-        "<script>window.csrftoken=\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"</script>",
+        format!("<script>window.csrftoken=\"{}\"</script>", mock.csrf_token),
     )
         .into_response()
 }
@@ -179,9 +181,10 @@ async fn fake(mock: Arc<Mock>, headers: HeaderMap, body: Value, kind: &str) -> R
             .get(header::COOKIE)
             .and_then(|v| v.to_str().ok())
             .unwrap_or("");
-        if headers.get("csrftoken").and_then(|v| v.to_str().ok())
-            != Some("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb")
-            || !cookies.contains("csrfkey=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+        if headers.get("csrftoken").and_then(|v| v.to_str().ok()) != Some(mock.csrf_token.as_str())
+            || !cookie::Cookie::split_parse(cookies)
+                .filter_map(Result::ok)
+                .any(|cookie| cookie.name() == "csrfkey" && cookie.value() == mock.csrf_key)
         {
             return (StatusCode::UNAUTHORIZED, "csrf").into_response();
         }
@@ -313,7 +316,11 @@ async fn fake(mock: Arc<Mock>, headers: HeaderMap, body: Value, kind: &str) -> R
 }
 
 async fn mock_server() -> (String, Arc<Mock>, tokio::task::JoinHandle<()>) {
-    let mock = Arc::new(Mock::default());
+    let mock = Arc::new(Mock {
+        csrf_key: uuid::Uuid::new_v4().simple().to_string(),
+        csrf_token: uuid::Uuid::new_v4().simple().to_string(),
+        ..Default::default()
+    });
     let router = Router::new()
         .route("/", get(homepage))
         .route("/ai/chat/completions", post(cnb))
@@ -514,10 +521,7 @@ async fn protocol_and_upstream_matrix() {
                     let (_, headers, upstream) = calls.last().unwrap();
                     if kind == "cnb" {
                         assert!(upstream.get("tools").is_none());
-                        assert_eq!(
-                            headers["csrftoken"],
-                            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
-                        );
+                        assert_eq!(headers["csrftoken"], mock.csrf_token.as_str());
                     }
                     if native {
                         assert!(upstream["tools"].is_array());
@@ -564,7 +568,7 @@ async fn authentication_csrf_retry_and_error_redaction() {
         .unwrap();
     let pool_body = to_bytes(pool_response.into_body(), 10000).await.unwrap();
     let pool_text = String::from_utf8(pool_body.to_vec()).unwrap();
-    assert!(!pool_text.contains("aaaaaaaa") && !pool_text.contains("bbbbbbbb"));
+    assert!(!pool_text.contains(&mock.csrf_key) && !pool_text.contains(&mock.csrf_token));
     let (status, _, out) = call(
         cnb,
         "/v1/chat/completions",
@@ -1366,7 +1370,8 @@ async fn reload_keeps_existing_streams_and_rejects_invalid_changes() {
 #[tokio::test]
 async fn reload_watches_config_and_keeps_last_valid_version() {
     let (base, _, server) = mock_server().await;
-    let path = std::env::temp_dir().join(format!("cnb-forge-reload-{}.yaml", uuid::Uuid::new_v4()));
+    let path =
+        std::env::temp_dir().join(format!("cnb-npc2api-reload-{}.yaml", uuid::Uuid::new_v4()));
     let raw = format!("client_authentication:\n  enabled: true\n  allowed_keys: [old-key]\nupstreams:\n  - name: mock\n    type: openai_compat\n    base_url: {base}/v1\n    models: [test-model]\n");
     std::fs::write(&path, &raw).unwrap();
     let (router, handle) =
@@ -1507,5 +1512,151 @@ async fn authenticated_cnb_session_is_paired_with_csrf_and_redacted() {
     let mut invalid = config("http://example.com", "cnb", false);
     invalid.upstreams[0].session_cookie = "session_id=value".into();
     assert!(invalid.validate().is_err());
+    server.abort();
+}
+
+#[tokio::test]
+async fn distinct_cnb_sessions_keep_their_own_csrf_pairs() {
+    struct Account {
+        session: String,
+        initial_key: String,
+        active_key: String,
+        token: String,
+        refresh_key: bool,
+    }
+    struct Sessions {
+        accounts: Vec<Account>,
+        seen: Mutex<Vec<usize>>,
+    }
+    fn cookie_value(headers: &HeaderMap, name: &str) -> Option<String> {
+        let raw = headers.get(header::COOKIE)?.to_str().ok()?;
+        cookie::Cookie::split_parse(raw)
+            .filter_map(Result::ok)
+            .find(|cookie| cookie.name() == name)
+            .map(|cookie| cookie.value().to_owned())
+    }
+    async fn session_home(State(state): State<Arc<Sessions>>, headers: HeaderMap) -> Response {
+        let session = cookie_value(&headers, "session_id");
+        let Some(account) = state
+            .accounts
+            .iter()
+            .find(|account| Some(&account.session) == session.as_ref())
+        else {
+            return StatusCode::UNAUTHORIZED.into_response();
+        };
+        let body = format!("<script>window.csrftoken=\"{}\"</script>", account.token);
+        if account.refresh_key {
+            (
+                [(
+                    header::SET_COOKIE,
+                    format!("csrfkey={}; Path=/", account.active_key),
+                )],
+                body,
+            )
+                .into_response()
+        } else {
+            body.into_response()
+        }
+    }
+    async fn session_chat(
+        State(state): State<Arc<Sessions>>,
+        headers: HeaderMap,
+        Json(_body): Json<Value>,
+    ) -> Response {
+        let session = cookie_value(&headers, "session_id");
+        let csrf = cookie_value(&headers, "csrfkey");
+        let token = headers
+            .get("csrftoken")
+            .and_then(|value| value.to_str().ok());
+        let Some((index, _)) = state.accounts.iter().enumerate().find(|(_, account)| {
+            Some(&account.session) == session.as_ref()
+                && Some(&account.active_key) == csrf.as_ref()
+                && Some(account.token.as_str()) == token
+        }) else {
+            return StatusCode::FORBIDDEN.into_response();
+        };
+        state.seen.lock().unwrap().push(index);
+        fragmented(
+            sse(
+                &json!({"choices":[{"delta":{"content":"ok"},"finish_reason":null}]}),
+                None,
+            ) + &sse(
+                &json!({"choices":[{"delta":{},"finish_reason":"stop"}]}),
+                None,
+            ) + "data: [DONE]\n\n",
+        )
+    }
+
+    let random_value = || uuid::Uuid::new_v4().simple().to_string();
+    let retained_key = random_value();
+    let state = Arc::new(Sessions {
+        accounts: vec![
+            Account {
+                session: random_value(),
+                initial_key: random_value(),
+                active_key: random_value(),
+                token: random_value(),
+                refresh_key: true,
+            },
+            Account {
+                session: random_value(),
+                initial_key: retained_key.clone(),
+                active_key: retained_key,
+                token: random_value(),
+                refresh_key: false,
+            },
+        ],
+        seen: Mutex::new(Vec::new()),
+    });
+    let server_router = Router::new()
+        .route("/", get(session_home))
+        .route("/ai/chat/completions", post(session_chat))
+        .with_state(state.clone());
+    let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+    let base = format!("http://{}", listener.local_addr().unwrap());
+    let server = tokio::spawn(async move { axum::serve(listener, server_router).await.unwrap() });
+    let mut cfg = config(&base, "cnb", false);
+    cfg.client_authentication.allowed_keys = vec!["client-a".into(), "client-b".into()];
+    let template = cfg.upstreams[0].clone();
+    cfg.upstreams = state
+        .accounts
+        .iter()
+        .enumerate()
+        .map(|(index, account)| {
+            let mut upstream = template.clone();
+            upstream.name = format!("account-{index}");
+            upstream.models = vec![format!("model-{index}")];
+            upstream.session_cookie = format!(
+                "session_id={}; csrfkey={}",
+                account.session, account.initial_key
+            );
+            upstream
+        })
+        .collect();
+    cfg.validate().unwrap();
+    let router = api::router(api::App::new(cfg).await.unwrap());
+    for _ in 0..3 {
+        let first = json!({"model":"model-0","messages":[{"role":"user","content":"hello"}]});
+        let second = json!({"model":"model-1","messages":[{"role":"user","content":"hello"}]});
+        let (a, b) = tokio::join!(
+            call(
+                router.clone(),
+                "/v1/chat/completions",
+                first,
+                Some("client-a")
+            ),
+            call(
+                router.clone(),
+                "/v1/chat/completions",
+                second,
+                Some("client-b")
+            ),
+        );
+        assert_eq!(a.0, StatusCode::OK);
+        assert_eq!(b.0, StatusCode::OK);
+    }
+    let seen = state.seen.lock().unwrap();
+    assert_eq!(seen.iter().filter(|index| **index == 0).count(), 3);
+    assert_eq!(seen.iter().filter(|index| **index == 1).count(), 3);
     server.abort();
 }

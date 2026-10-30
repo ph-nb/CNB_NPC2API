@@ -5,8 +5,8 @@ export PATH=/bin:/sbin:/usr/bin:/usr/sbin
 /bin/busybox mount -t devtmpfs devtmpfs /dev
 /bin/busybox ip link set lo up
 result=0
-/work/cnb-forge --help || result=1
-/work/cnb-forge --config /work/config.yaml &
+/work/cnb-npc2api --help || result=1
+/work/cnb-npc2api --config /work/config.yaml &
 pid=$!
 health=""
 for n in 1 2 3 4 5 6 7 8 9 10; do
@@ -18,6 +18,6 @@ models=$(/bin/busybox wget -qO- http://127.0.0.1:18080/v1/models 2>/dev/null)
 case "$models" in *'"id":"test-model"'*) echo "Release models: ok" ;; *) echo "Release models: failed"; result=1 ;; esac
 kill "$pid" 2>/dev/null
 wait "$pid" 2>/dev/null
-echo CNB_FORGE_RELEASE_RESULT=$result
+echo CNB_NPC2API_RELEASE_RESULT=$result
 echo MIERU_LINUX_RESULT=$result
 /bin/busybox poweroff -f

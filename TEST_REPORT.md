@@ -4,6 +4,12 @@
 
 本记录中的 `../.build-tools/` 路径指原测试机上的本地日志，不随源码仓库分发。GitHub Actions 的结果应以对应工作流运行记录为准。
 
+## CNB_NPC2API 更名和会话测试
+
+- Windows 本机的 34 项 Rust 测试通过，包括两个随机生成的 CNB 会话并发请求；分别验证了首页更新 CSRF Cookie 和沿用会话已有 Cookie，确认两个上游各自使用匹配的 Cookie 与 token。
+- 更名后的程序通过官方 SDK 的 16 个模拟场景和两个流式聚合器，以及 CLI 版本、健康接口、配置重载和三类模拟上游测试。模拟测试不使用真实用户的 CSRF 值。
+- 自动发布流程以通过 CI 的 `main` 推送为前提，版本号、制品和限制见 [开发与测试](docs/DEVELOPMENT.md)。具体发布结果以 GitHub Actions 和 Release 记录为准。
+
 ## 2026-10-29 后续复测
 
 - Windows GNU：33 项 Rust 测试、`cargo fmt --check`、Clippy 严格检查再次通过。

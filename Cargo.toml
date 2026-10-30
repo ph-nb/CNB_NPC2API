@@ -1,7 +1,11 @@
 [package]
-name = "cnb-forge"
+name = "CNB_NPC2API"
 version = "0.1.0"
 edition = "2021"
+
+[[bin]]
+name = "cnb-npc2api"
+path = "src/main.rs"
 
 [dependencies]
 anyhow = "1"

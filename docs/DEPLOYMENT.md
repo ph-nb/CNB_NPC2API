@@ -8,29 +8,29 @@
 cargo build --locked --release
 ```
 
-Windows 使用 MSVC 时，需要 Visual Studio C++ 构建工具。Linux 上通常需要 GCC 或 Clang；程序使用 Rustls，不要求系统 OpenSSL 开发库。生成的程序分别是 `target/release/cnb-forge.exe` 和 `target/release/cnb-forge`。
+Windows 使用 MSVC 时，需要 Visual Studio C++ 构建工具。Linux 上通常需要 GCC 或 Clang；程序使用 Rustls，不要求系统 OpenSSL 开发库。生成的程序分别是 `target/release/cnb-npc2api.exe` 和 `target/release/cnb-npc2api`。
 
 PowerShell 7 示例，使用不回显的交互输入提供 CNB Cookie：
 
 ```powershell
-$env:CNB_FORGE_API_KEY = [Convert]::ToBase64String([Security.Cryptography.RandomNumberGenerator]::GetBytes(32))
+$env:CNB_NPC2API_API_KEY = [Convert]::ToBase64String([Security.Cryptography.RandomNumberGenerator]::GetBytes(32))
 $session = Read-Host 'CNB Cookie header' -AsSecureString
 $env:CNB_SESSION_COOKIE = [System.Net.NetworkCredential]::new('', $session).Password
 Remove-Variable session
-.\target\release\cnb-forge.exe --config config.example.yaml
+.\target\release\cnb-npc2api.exe --config config.example.yaml
 ```
 
 POSIX shell 示例：
 
 ```sh
-export CNB_FORGE_API_KEY="$(openssl rand -base64 32)"
+export CNB_NPC2API_API_KEY="$(openssl rand -base64 32)"
 printf 'CNB Cookie header: '
 stty -echo
 read -r CNB_SESSION_COOKIE
 stty echo
 printf '\n'
 export CNB_SESSION_COOKIE
-./target/release/cnb-forge --config config.example.yaml
+./target/release/cnb-npc2api --config config.example.yaml
 ```
 
 上面的 Cookie 是完整 HTTP Cookie 请求头的值，字段名称和大小写必须与浏览器实际值一致。应从本机安全环境提供会话，不要粘贴到聊天、源码或 shell 历史。退出服务后可清理进程环境变量。匿名启动可能取得 CSRF 凭证，但真实聊天可能返回未登录。`RUST_LOG=info` 可启用启动和重载日志。
@@ -40,9 +40,9 @@ export CNB_SESSION_COOKIE
 标准镜像在构建阶段编译 Rust 程序，运行阶段使用非 root 用户：
 
 ```sh
-docker build -t cnb-forge .
+docker build -t cnb-npc2api .
 docker run --rm -p 127.0.0.1:8080:8080 \
-  -e CNB_FORGE_API_KEY -e CNB_SESSION_COOKIE cnb-forge
+  -e CNB_NPC2API_API_KEY -e CNB_SESSION_COOKIE cnb-npc2api
 ```
 
 容器从环境继承上述变量，容器内监听 `0.0.0.0:8080`，示例将宿主机端口限制在回环地址。使用自己的配置时可通过只读挂载传入，并将 `--config /app/config.yaml` 作为镜像参数传给程序；配置必须允许容器内的非 root 用户读取。环境变量和容器配置均可能被本机管理员查看，应限制对主机和 Docker 守护进程的访问。
@@ -52,7 +52,7 @@ docker run --rm -p 127.0.0.1:8080:8080 \
 ```sh
 rustup target add x86_64-unknown-linux-musl
 cargo build --locked --release --target x86_64-unknown-linux-musl
-docker build -f Dockerfile.musl -t cnb-forge:musl .
+docker build -f Dockerfile.musl -t cnb-npc2api:musl .
 ```
 
 在 Debian/Ubuntu 构建该目标通常需要安装 `musl-tools`。scratch 镜像没有 shell；需要通过宿主机 HTTP 请求检查健康状态，不能依赖容器内 `curl`。两个镜像均可使用 `python tests/docker_smoke.py IMAGE` 运行无真实上游的冒烟测试，该测试需要 Docker 的 `host-gateway` 功能。

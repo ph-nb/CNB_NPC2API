@@ -60,7 +60,31 @@ routing:
 
 路由按以下顺序选择：明确的 `routing.aliases`，精确匹配的模型，第一个通配上游，第一个 `is_default` 上游，最后是第一个上游。别名的 `model` 为空时使用客户端模型名。`/v1/models` 展示明确配置的模型和别名，不展示 `*`。
 
-CNB 启动时会访问首页取得 CSRF 凭证；首页不可达或无法取得凭证时启动失败。获得凭证不代表聊天已登录：真实聊天通常需要有效的 CNB 登录 Cookie。Cookie 值请通过环境变量或服务管理器提供，不要写入仓库。
+CNB 启动时会使用该上游的 Cookie 访问首页取得配对的 CSRF token 和 Cookie；首页设置了新的 `csrfkey` 时使用新值，否则使用当前会话中已有的值。不同用户的值可以不同，程序不提供固定的用户 CSRF 值。首页不可达或无法取得凭证时启动失败。获得凭证不代表聊天已登录：真实聊天通常需要有效的 CNB 登录 Cookie。Cookie 值请通过环境变量或服务管理器提供，不要写入仓库。
+
+不同 CNB 账户可分别配置为独立上游，并通过模型别名选择：
+
+```yaml
+upstreams:
+  - name: account-a
+    type: cnb
+    base_url: https://cnb.cool
+    session_cookie: "${CNB_ACCOUNT_A_COOKIE}"
+    models: [deepseek-v4-flash]
+    native_fc: false
+  - name: account-b
+    type: cnb
+    base_url: https://cnb.cool
+    session_cookie: "${CNB_ACCOUNT_B_COOKIE}"
+    models: [deepseek-v4-flash]
+    native_fc: false
+routing:
+  aliases:
+    account-a-model: {upstream: account-a, model: deepseek-v4-flash}
+    account-b-model: {upstream: account-b, model: deepseek-v4-flash}
+```
+
+每个变量均由对应账户在本地提供完整 Cookie 请求头值，凭证池相互独立。客户端密钥只用于鉴权，不自动绑定上游：有权限访问网关的客户端可以选择已配置的任一别名。需要按用户隔离账户时，应分别运行实例或在受信任的访问层限制路由。
 
 ## 功能开关
 

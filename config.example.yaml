@@ -6,7 +6,7 @@ server:
 client_authentication:
   enabled: true
   allowed_keys:
-    - "${CNB_FORGE_API_KEY}"
+    - "${CNB_NPC2API_API_KEY}"
 
 upstreams:
   - name: cnb

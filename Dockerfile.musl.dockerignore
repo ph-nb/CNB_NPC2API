@@ -5,4 +5,4 @@
 !target
 !target/x86_64-unknown-linux-musl
 !target/x86_64-unknown-linux-musl/release
-!target/x86_64-unknown-linux-musl/release/cnb-forge
+!target/x86_64-unknown-linux-musl/release/cnb-npc2api

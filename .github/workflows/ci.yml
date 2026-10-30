@@ -2,6 +2,7 @@ name: CI
 
 on:
   push:
+    branches: [main]
   pull_request:
   workflow_dispatch:
 
@@ -18,14 +19,14 @@ jobs:
         os: [ubuntu-latest, windows-latest]
     defaults:
       run:
-        working-directory: cnb-forge
+        working-directory: CNB_NPC2API
     env:
-      CNB_FORGE_BINARY: ${{ github.workspace }}/cnb-forge/target/debug/cnb-forge${{ matrix.os == 'windows-latest' && '.exe' || '' }}
+      CNB_NPC2API_BINARY: ${{ github.workspace }}/CNB_NPC2API/target/debug/cnb-npc2api${{ matrix.os == 'windows-latest' && '.exe' || '' }}
     steps:
       - name: Check out gateway
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
-          path: cnb-forge
+          path: CNB_NPC2API
           persist-credentials: false
       - name: Check out parser reference
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
@@ -56,6 +57,8 @@ jobs:
         run: python -m pip install -r tests/sdk-requirements.txt
       - name: Compare ToolForge parser
         run: python tests/parser_reference.py
+      - name: Test release version calculation
+        run: python -m unittest discover -s tests -p release_version_test.py
       - name: Test client SDKs
         run: python tests/sdk_smoke.py
       - name: Test SDK live request shapes against mock
@@ -89,10 +92,149 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y musl-tools
       - name: Build standard image
-        run: docker build --tag cnb-forge:ci .
+        run: docker build --tag cnb-npc2api:ci .
       - name: Build musl image
         run: |
           cargo build --locked --release --target x86_64-unknown-linux-musl
-          docker build --file Dockerfile.musl --tag cnb-forge:musl-ci .
+          docker build --file Dockerfile.musl --tag cnb-npc2api:musl-ci .
       - name: Smoke test both images
-        run: python tests/docker_smoke.py cnb-forge:ci cnb-forge:musl-ci
+        run: python tests/docker_smoke.py cnb-npc2api:ci cnb-npc2api:musl-ci
+
+  release-meta:
+    name: Calculate release version
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [rust-and-sdk, docker]
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - name: Check out tested commit
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.13'
+      - name: Calculate version
+        id: version
+        run: |
+          version=$(python scripts/release_version.py)
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+  release-build:
+    name: Build release (${{ matrix.target }})
+    needs: release-meta
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-musl
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+    env:
+      CNB_NPC2API_RELEASE_VERSION: ${{ needs.release-meta.outputs.version }}
+    steps:
+      - name: Check out tested commit
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.13'
+      - name: Update Rust
+        run: rustup update stable --no-self-update
+      - name: Select Rust
+        run: rustup default stable
+      - name: Install Linux musl compiler
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y musl-tools
+      - name: Install target
+        run: rustup target add ${{ matrix.target }}
+      - name: Compile release
+        run: cargo build --locked --release --target ${{ matrix.target }}
+      - name: Check embedded release version
+        run: python -c "import os,subprocess,sys; value=subprocess.check_output([sys.argv[1], '--version'], text=True).strip(); assert value == 'CNB_NPC2API ' + os.environ['CNB_NPC2API_RELEASE_VERSION'], value" target/${{ matrix.target }}/release/cnb-npc2api${{ matrix.os == 'windows-latest' && '.exe' || '' }}
+      - name: Smoke test release executable
+        env:
+          CNB_NPC2API_BINARY: ${{ github.workspace }}/target/${{ matrix.target }}/release/cnb-npc2api${{ matrix.os == 'windows-latest' && '.exe' || '' }}
+        run: python tests/cli_reload_smoke.py
+      - name: Package Linux release
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          mkdir -p release-package
+          cp target/${{ matrix.target }}/release/cnb-npc2api README.md LICENSE NOTICE.md config.example.yaml release-package/
+          cp -r docs release-package/docs
+          tar -C release-package -czf "CNB_NPC2API-v${CNB_NPC2API_RELEASE_VERSION}-linux-x86_64-musl.tar.gz" .
+      - name: Package Windows release
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path release-package | Out-Null
+          Copy-Item target/${{ matrix.target }}/release/cnb-npc2api.exe, README.md, LICENSE, NOTICE.md, config.example.yaml -Destination release-package/
+          Copy-Item docs -Destination release-package/docs -Recurse
+          Compress-Archive -Path release-package/* -DestinationPath "CNB_NPC2API-v$env:CNB_NPC2API_RELEASE_VERSION-windows-x86_64.zip"
+      - name: Upload release bundle
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: bundle-${{ matrix.target }}
+          path: CNB_NPC2API-v${{ needs.release-meta.outputs.version }}-*
+          if-no-files-found: error
+          retention-days: 7
+
+  release:
+    name: Publish release
+    needs: [release-meta, release-build]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    concurrency:
+      group: release-main
+      cancel-in-progress: false
+    steps:
+      - name: Check out tested commit and tags
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Download release bundles
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
+        with:
+          pattern: bundle-*
+          path: release-assets
+          merge-multiple: true
+      - name: Publish release for current main
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ needs.release-meta.outputs.version }}
+        run: |
+          tag="v$VERSION"
+          main_sha=$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/main" --jq '.object.sha')
+          if [ "$main_sha" != "$GITHUB_SHA" ]; then
+            echo "A newer main commit is available; skipping the superseded release."
+            exit 0
+          fi
+          if git show-ref --verify --quiet "refs/tags/$tag"; then
+            tag_sha=$(git rev-list -n 1 "$tag")
+            if [ "$tag_sha" != "$GITHUB_SHA" ]; then
+              echo "Existing tag points to another commit; refusing to overwrite it."
+              exit 1
+            fi
+          fi
+          cd release-assets
+          sha256sum ./*.tar.gz ./*.zip > SHA256SUMS.txt
+          if gh release view "$tag" --json isDraft --jq .isDraft > "$RUNNER_TEMP/release-state" 2>/dev/null; then
+            if [ "$(cat "$RUNNER_TEMP/release-state")" = "false" ]; then
+              echo "Release $tag is already published."
+              exit 0
+            fi
+            gh release upload "$tag" ./*.tar.gz ./*.zip SHA256SUMS.txt --clobber
+          else
+            gh release create "$tag" ./*.tar.gz ./*.zip SHA256SUMS.txt --draft --target "$GITHUB_SHA" --title "CNB_NPC2API $tag" --generate-notes
+          fi
+          gh release edit "$tag" --draft=false

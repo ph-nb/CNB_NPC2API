@@ -16,6 +16,11 @@ use anyhow::{bail, Context, Result};
 use config::Config;
 use std::{env, path::PathBuf};
 
+const VERSION: &str = match option_env!("CNB_NPC2API_RELEASE_VERSION") {
+    Some(version) => version,
+    None => env!("CARGO_PKG_VERSION"),
+};
+
 #[tokio::main]
 async fn main() -> Result<()> {
     tracing_subscriber::fmt()
@@ -45,8 +50,12 @@ async fn main() -> Result<()> {
                 )
             }
             "--reload" => reload = true,
+            "-V" | "--version" => {
+                println!("CNB_NPC2API {VERSION}");
+                return Ok(());
+            }
             "-h" | "--help" => {
-                println!("Usage: cnb-forge [serve] [-c config.yaml] [--host HOST] [--port PORT] [--reload]");
+                println!("Usage: cnb-npc2api [serve] [-c config.yaml] [--host HOST] [--port PORT] [--reload]");
                 return Ok(());
             }
             _ => bail!("unknown argument: {arg}"),
@@ -78,7 +87,7 @@ async fn main() -> Result<()> {
     } else {
         api::router(app)
     };
-    tracing::info!(address = %listener.local_addr()?, "cnb-forge listening");
+    tracing::info!(address = %listener.local_addr()?, "CNB_NPC2API listening");
     axum::serve(listener, router)
         .with_graceful_shutdown(async {
             let _ = tokio::signal::ctrl_c().await;

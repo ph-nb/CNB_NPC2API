@@ -4,6 +4,7 @@ import argparse
 import getpass
 import json
 import os
+import secrets
 import socket
 import subprocess
 import tempfile
@@ -20,8 +21,8 @@ from openai import OpenAI
 
 KEY = "local-test-key"
 MODEL = "deepseek-v4-flash"
-TOKEN = "b" * 40
-COOKIE = "a" * 32
+TOKEN = secrets.token_hex(20)
+COOKIE = secrets.token_hex(16)
 SCHEMA = {"type": "object", "properties": {"city": {"type": "string"}}, "required": ["city"]}
 TOOL_TEXT = (
     '<|XYML|tool_calls><|XYML|invoke name="get_weather">'
@@ -218,9 +219,9 @@ def main():
         parser.error("--session-prompt requires --live")
     if args.mock_live_inputs and args.live:
         parser.error("--mock-live-inputs cannot be combined with --live")
-    binary_name = "cnb-forge.exe" if os.name == "nt" else "cnb-forge"
+    binary_name = "cnb-npc2api.exe" if os.name == "nt" else "cnb-npc2api"
     default_binary = str(Path("target") / ("release" if args.live else "debug") / binary_name)
-    binary = Path(os.environ.get("CNB_FORGE_BINARY", default_binary)).resolve()
+    binary = Path(os.environ.get("CNB_NPC2API_BINARY") or os.environ.get("CNB_FORGE_BINARY") or default_binary).resolve()
     if not binary.is_file():
         raise FileNotFoundError(binary)
     mock = None
@@ -230,7 +231,7 @@ def main():
         thread.start()
     listen = port()
     base = f"http://127.0.0.1:{listen}"
-    with tempfile.TemporaryDirectory(prefix="cnb-forge-sdk-") as tmp:
+    with tempfile.TemporaryDirectory(prefix="cnb-npc2api-sdk-") as tmp:
         config = Path(tmp) / "config.yaml"
         config.write_text(
             f"server:\n  host: 127.0.0.1\n  port: {listen}\n"

@@ -1,7 +1,7 @@
 FROM scratch
 WORKDIR /app
-COPY target/x86_64-unknown-linux-musl/release/cnb-forge /usr/local/bin/cnb-forge
+COPY target/x86_64-unknown-linux-musl/release/cnb-npc2api /usr/local/bin/cnb-npc2api
 COPY config.example.yaml /app/config.example.yaml
 USER 10001:10001
 EXPOSE 8080
-ENTRYPOINT ["/usr/local/bin/cnb-forge", "--host", "0.0.0.0"]
+ENTRYPOINT ["/usr/local/bin/cnb-npc2api", "--host", "0.0.0.0"]

@@ -155,8 +155,8 @@ def main():
     parsed = urllib.parse.urlsplit(base_url)
     if parsed.username or parsed.password or parsed.query or parsed.fragment or not (parsed.scheme == "https" or (parsed.scheme == "http" and parsed.hostname in ("127.0.0.1", "localhost", "::1"))):
         parser.error("base URL must use HTTPS, except for localhost")
-    binary_name = "cnb-forge.exe" if os.name == "nt" else "cnb-forge"
-    binary = Path(os.environ.get("CNB_FORGE_BINARY", str(Path("target/release") / binary_name))).resolve()
+    binary_name = "cnb-npc2api.exe" if os.name == "nt" else "cnb-npc2api"
+    binary = Path(os.environ.get("CNB_NPC2API_BINARY") or os.environ.get("CNB_FORGE_BINARY") or str(Path("target/release") / binary_name)).resolve()
     if not binary.is_file():
         raise FileNotFoundError(binary)
     port = sdk.port()
@@ -165,7 +165,7 @@ def main():
     sdk.KEY, sdk.MODEL = local_key, args.model
     config = {"server": {"host": "127.0.0.1", "port": port}, "client_authentication": {"enabled": True, "allowed_keys": [local_key]}, "upstreams": [{"name": args.provider, "type": kind, "base_url": base_url, "api_key": "${LIVE_UPSTREAM_API_KEY}", "models": [args.model], "native_fc": True}]}
     try:
-        with tempfile.TemporaryDirectory(prefix="cnb-forge-upstream-") as tmp:
+        with tempfile.TemporaryDirectory(prefix="cnb-npc2api-upstream-") as tmp:
             config_path = Path(tmp) / "config.yaml"
             config_path.write_text(json.dumps(config), encoding="utf-8")
             env = os.environ.copy()

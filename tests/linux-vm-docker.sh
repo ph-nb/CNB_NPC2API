@@ -35,18 +35,18 @@ else
     echo "Docker daemon: ready (vfs)"
     /bin/busybox cp /bin/busybox /tmp/rootfs/bin/busybox
     /bin/busybox cp -a /lib/. /tmp/rootfs/lib/
-    /bin/busybox cp /work/cnb-forge /tmp/rootfs/usr/local/bin/cnb-forge
+    /bin/busybox cp /work/cnb-npc2api /tmp/rootfs/usr/local/bin/cnb-npc2api
     /bin/busybox cp /work/config.yaml /tmp/rootfs/app/config.yaml
     /bin/busybox tar -C /tmp/rootfs -cf /tmp/rootfs.tar .
-    if docker -H unix:///tmp/docker.sock import /tmp/rootfs.tar cnb-forge-smoke:local >/dev/null 2>&1 &&
-       docker -H unix:///tmp/docker.sock run -d --network none --name cnb-forge-smoke cnb-forge-smoke:local /usr/local/bin/cnb-forge --config /app/config.yaml >/dev/null 2>&1; then
+    if docker -H unix:///tmp/docker.sock import /tmp/rootfs.tar cnb-npc2api-smoke:local >/dev/null 2>&1 &&
+       docker -H unix:///tmp/docker.sock run -d --network none --name cnb-npc2api-smoke cnb-npc2api-smoke:local /usr/local/bin/cnb-npc2api --config /app/config.yaml >/dev/null 2>&1; then
         health=""
         for n in $(/bin/busybox seq 1 30); do
-            health=$(docker -H unix:///tmp/docker.sock exec cnb-forge-smoke /bin/busybox wget -qO- http://127.0.0.1:18080/healthz 2>/dev/null) && break
+            health=$(docker -H unix:///tmp/docker.sock exec cnb-npc2api-smoke /bin/busybox wget -qO- http://127.0.0.1:18080/healthz 2>/dev/null) && break
             /bin/busybox sleep 1
         done
         case "$health" in *'"status":"ok"'*) echo "Docker container health: ok" ;; *) echo "Docker container health: failed"; result=1 ;; esac
-        models=$(docker -H unix:///tmp/docker.sock exec cnb-forge-smoke /bin/busybox wget -qO- http://127.0.0.1:18080/v1/models 2>/dev/null)
+        models=$(docker -H unix:///tmp/docker.sock exec cnb-npc2api-smoke /bin/busybox wget -qO- http://127.0.0.1:18080/v1/models 2>/dev/null)
         case "$models" in *'"id":"test-model"'*) echo "Docker container models: ok" ;; *) echo "Docker container models: failed"; result=1 ;; esac
     else
         echo "Docker image import or container start: failed"
@@ -54,13 +54,13 @@ else
         result=1
     fi
     /bin/busybox mkdir -p /tmp/context/target/x86_64-unknown-linux-musl/release
-    /bin/busybox cp /work/cnb-forge /tmp/context/target/x86_64-unknown-linux-musl/release/cnb-forge
+    /bin/busybox cp /work/cnb-npc2api /tmp/context/target/x86_64-unknown-linux-musl/release/cnb-npc2api
     /bin/busybox cp /work/config.yaml /tmp/context/config.example.yaml
     /bin/busybox cp /work/Dockerfile.musl /tmp/context/Dockerfile.musl
     /bin/busybox cp /work/Dockerfile.musl.dockerignore /tmp/context/Dockerfile.musl.dockerignore
     /bin/busybox cp /work/dockerignore /tmp/context/.dockerignore
-    if DOCKER_BUILDKIT=0 docker -H unix:///tmp/docker.sock build -t cnb-forge-build:local -f /tmp/context/Dockerfile.musl /tmp/context >/tmp/docker-build.log 2>&1 &&
-       docker -H unix:///tmp/docker.sock run -d --network host --name cnb-forge-build cnb-forge-build:local >/dev/null 2>&1; then
+    if DOCKER_BUILDKIT=0 docker -H unix:///tmp/docker.sock build -t cnb-npc2api-build:local -f /tmp/context/Dockerfile.musl /tmp/context >/tmp/docker-build.log 2>&1 &&
+       docker -H unix:///tmp/docker.sock run -d --network host --name cnb-npc2api-build cnb-npc2api-build:local >/dev/null 2>&1; then
         health=""
         for n in $(/bin/busybox seq 1 30); do
             health=$(/bin/busybox wget -qO- http://127.0.0.1:18080/healthz 2>/dev/null) && break

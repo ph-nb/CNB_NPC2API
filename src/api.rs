@@ -181,7 +181,7 @@ fn unauthorized() -> Response {
 async fn health(State(app): State<App>) -> Json<Value> {
     let count: usize = app.transport.pools.values().map(|p| p.stats().len()).sum();
     Json(
-        json!({"status":"ok","version":env!("CARGO_PKG_VERSION"),"upstreams":app.cfg.upstreams.iter().map(|u|&u.name).collect::<Vec<_>>(),"poolSize":count}),
+        json!({"status":"ok","version":crate::VERSION,"upstreams":app.cfg.upstreams.iter().map(|u|&u.name).collect::<Vec<_>>(),"poolSize":count}),
     )
 }
 async fn metrics(State(app): State<App>, headers: HeaderMap) -> Response {

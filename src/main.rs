@@ -28,7 +28,9 @@ async fn main() -> Result<()> {
         .with_env_filter(tracing_subscriber::EnvFilter::from_default_env())
         .init();
     let mut args = env::args().skip(1);
-    let mut path = env::var_os("TOOLFORGE_CONFIG").map(PathBuf::from);
+    let mut path = env::var_os("CNB_NPC2API_CONFIG")
+        .or_else(|| env::var_os("TOOLFORGE_CONFIG"))
+        .map(PathBuf::from);
     let mut host = None;
     let mut port = None;
     let mut reload = false;

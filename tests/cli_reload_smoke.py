@@ -17,6 +17,41 @@ def unused_port():
         return sock.getsockname()[1]
 
 
+def check_config_paths(binary, path):
+    missing = str(path.with_name("missing.yaml"))
+    cases = [
+        ([], {"CNB_NPC2API_CONFIG": str(path), "TOOLFORGE_CONFIG": missing}),
+        ([], {"TOOLFORGE_CONFIG": str(path)}),
+        (["--config", str(path)], {"CNB_NPC2API_CONFIG": missing, "TOOLFORGE_CONFIG": missing}),
+    ]
+    for arguments, variables in cases:
+        port = unused_port()
+        env = os.environ.copy()
+        env.pop("CNB_NPC2API_CONFIG", None)
+        env.pop("TOOLFORGE_CONFIG", None)
+        env.update(variables)
+        process = subprocess.Popen([str(binary), *arguments, "--host", "127.0.0.1", "--port", str(port)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, env=env, creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
+        try:
+            for _ in range(100):
+                if process.poll() is not None:
+                    raise RuntimeError("gateway failed to use the expected config path")
+                try:
+                    with urllib.request.urlopen(f"http://127.0.0.1:{port}/healthz", timeout=1) as response:
+                        if response.status == 200:
+                            break
+                except OSError:
+                    time.sleep(0.1)
+            else:
+                raise RuntimeError("gateway did not start with the expected config path")
+        finally:
+            process.terminate()
+            try:
+                process.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                process.kill()
+                process.wait()
+
+
 def main():
     name = "cnb-npc2api.exe" if os.name == "nt" else "cnb-npc2api"
     binary = Path(os.environ.get("CNB_NPC2API_BINARY") or os.environ.get("CNB_FORGE_BINARY") or str(Path("target/release") / name)).resolve()
@@ -29,6 +64,7 @@ def main():
     with tempfile.TemporaryDirectory(prefix="cnb-npc2api-reload-") as directory:
         path = Path(directory) / "config.yaml"
         path.write_text(json.dumps(config), encoding="utf-8")
+        check_config_paths(binary, path)
         process = subprocess.Popen([str(binary), "--config", str(path), "--host", "127.0.0.1", "--port", str(port), "--reload"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
         try:
             def models(key):
@@ -66,7 +102,7 @@ def main():
             path.write_text("server: [", encoding="utf-8")
             time.sleep(1.5)
             assert models("new-test-key")[0] == 200 and process.poll() is None
-            print("CLI version and health agree; changed key and model applied; invalid config retained previous state")
+            print("Config path precedence, CLI version, health and reload checks passed")
         finally:
             process.terminate()
             try:

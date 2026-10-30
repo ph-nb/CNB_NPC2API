@@ -1,6 +1,6 @@
 # 配置参考
 
-默认读取当前目录的 `config.yaml`，不存在时读取 `config.example.yaml`。`TOOLFORGE_CONFIG` 可指定路径，`--config` 或 `-c` 优先于环境变量。YAML 中的字符串支持 `${NAME}` 与 `${NAME:-default}`；变量未设置时前者展开为空字符串，后者使用默认值。展开后的值仍是字符串，不能用它替代数值或布尔字段。示例配置可以复制为被 Git 忽略的 `config.yaml`。
+默认读取当前目录的 `config.yaml`，不存在时读取 `config.example.yaml`。`CNB_NPC2API_CONFIG` 可指定路径，原来的 `TOOLFORGE_CONFIG` 仍可作为后备；`--config` 或 `-c` 优先于这两个环境变量。YAML 中的字符串支持 `${NAME}` 与 `${NAME:-default}`；变量未设置时前者展开为空字符串，后者使用默认值。展开后的值仍是字符串，不能用它替代数值或布尔字段。示例配置可以复制为被 Git 忽略的 `config.yaml`。
 
 ## 服务和客户端鉴权
 
